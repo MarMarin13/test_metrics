@@ -8,13 +8,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-            token: ${{ secrets.PAT }}
 
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
         continue-on-error: true # To make sure that SARIF upload gets called
-        env:
+        env: 
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --sarif-file-output=snyk.sarif
