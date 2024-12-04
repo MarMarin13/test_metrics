@@ -5,24 +5,21 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
-    permissions: write-all
+    
     steps:
       - uses: actions/checkout@v4
         with:
             token: ${{ secrets.PAT }}
 
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/setup@v2
+        uses: snyk/actions/node@master
         continue-on-error: true # To make sure that SARIF upload gets called
         env: 
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      - name: Run Snyk Code Scan and Generate Report
-        run: snyk code test --sarif-file-output=snyk-code-report.sarif
-
-      - name: Snyk Dependency Scan
-        run: snyk test --sarif-file-output=snyk-dependency-report.sarif
-        
-      - name: Upload SARIF Reports for Code Scanning
+        with:
+          command: code
+          args: --sarif-file-output=snyk.sarif
+      - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk-code-report.sarif
+          sarif_file: snyk.sarif
